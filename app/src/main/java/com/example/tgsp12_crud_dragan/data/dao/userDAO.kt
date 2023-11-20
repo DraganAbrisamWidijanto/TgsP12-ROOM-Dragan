@@ -7,24 +7,31 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.tgsp12_crud_dragan.data.entity.User
 
+// Antarmuka DAO (Data Access Object) untuk entitas "User"
 @Dao
 interface userDAO {
 
-@Query("SELECT * FROM user")
-fun getAll(): List<User>
+    // Mengambil semua data pengguna dari tabel "user"
+    @Query("SELECT * FROM user")
+    fun getAll(): List<User>
 
-@Query("SELECT * FROM user WHERE uid IN (:userIds)")
-fun loadAllByIds(userIds: IntArray): List<User>
+    // Memuat data pengguna berdasarkan array ID yang diberikan
+    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
+    fun loadAllByIds(userIds: IntArray): List<User>
 
-@Insert
-fun insertAll(vararg users: User)
+    // Memasukkan satu atau beberapa pengguna ke dalam tabel
+    @Insert
+    fun insertAll(vararg users: User)
 
-@Delete
-fun delete(user: User)
+    // Menghapus pengguna tertentu dari tabel
+    @Delete
+    fun delete(user: User)
 
-@Query("SELECT * FROM user WHERE uid = :uid")
-fun findById(uid: Int): User
+    // Mencari pengguna berdasarkan ID tertentu
+    @Query("SELECT * FROM user WHERE uid = :uid")
+    fun findById(uid: Int): User
 
-@Update
-fun update(user: User)
+    // Memperbarui data pengguna di dalam tabel
+    @Update
+    fun update(user: User)
 }

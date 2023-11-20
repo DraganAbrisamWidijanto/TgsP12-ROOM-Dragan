@@ -8,38 +8,52 @@ import android.widget.Toast
 import com.example.tgsp12_crud_dragan.data.AppDatabase
 import com.example.tgsp12_crud_dragan.data.entity.User
 
+// Aktivitas untuk menangani editor (tambah/edit) data pengguna
 class EditorActivity : AppCompatActivity() {
-    private lateinit var fullName:EditText
-    private lateinit var email:EditText
-    private lateinit var phone:EditText
-    private lateinit var savebtn:Button
+
+    // Mendeklarasikan elemen UI
+    private lateinit var fullName: EditText
+    private lateinit var email: EditText
+    private lateinit var phone: EditText
+    private lateinit var savebtn: Button
     private lateinit var database: AppDatabase
 
-
+    // Metode yang dipanggil saat aktivitas dibuat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Menetapkan tata letak untuk aktivitas dari file XML
         setContentView(R.layout.activity_editor)
-        fullName= findViewById(R.id.fullnametxt)
-        email= findViewById(R.id.emailtxt)
-        phone= findViewById(R.id.phonetxt)
-        savebtn= findViewById(R.id.savebtn)
 
-        database= AppDatabase.getInstance(applicationContext)
+        // Menghubungkan elemen UI dengan objeknya
+        fullName = findViewById(R.id.fullnametxt)
+        email = findViewById(R.id.emailtxt)
+        phone = findViewById(R.id.phonetxt)
+        savebtn = findViewById(R.id.savebtn)
 
-        val intent=intent.extras
-        if (intent!=null){
-            val id = intent.getInt("id",0)
-            val user=database.userDao().findById(id)
+        // Mendapatkan instance database menggunakan AppDatabase
+        database = AppDatabase.getInstance(applicationContext)
 
+        // Mengekstrak data intent jika ada
+        val intent = intent.extras
+        if (intent != null) {
+            // Jika ada intent, ini adalah mode pengeditan
+            val id = intent.getInt("id", 0)
+            // Mendapatkan data pengguna berdasarkan ID
+            val user = database.userDao().findById(id)
+
+            // Mengatur nilai EditText dengan data pengguna yang ada
             fullName.setText(user.fullName)
             email.setText(user.email)
             phone.setText(user.phoneNumber)
         }
 
+        // Menetapkan fungsi klik untuk tombol simpan
         savebtn.setOnClickListener {
+            // Memeriksa apakah semua kolom data telah diisi
             if (fullName.text.isNotEmpty() && email.text.isNotEmpty() && phone.text.isNotEmpty()) {
-                //edit data
-                if(intent != null) {
+                // Jika intent tidak null, ini adalah mode pengeditan
+                if (intent != null) {
+                    // Memperbarui data pengguna di dalam database
                     database.userDao().update(
                         User(
                             intent.getInt("id", 0),
@@ -48,8 +62,9 @@ class EditorActivity : AppCompatActivity() {
                             phone.text.toString()
                         )
                     )
-                } else{
-                    //tambah data
+                } else {
+                    // Jika intent null, ini adalah mode penambahan data baru
+                    // Menambahkan data pengguna baru ke dalam database
                     database.userDao().insertAll(
                         User(
                             null,
@@ -59,10 +74,11 @@ class EditorActivity : AppCompatActivity() {
                         )
                     )
                 }
+                // Menutup aktivitas setelah menyimpan data
                 finish()
             } else {
-                Toast.makeText(applicationContext, "Datanya tolong diisi bro", Toast.LENGTH_SHORT)
-                    .show()
+                // Menampilkan pesan jika ada kolom data yang belum diisi
+                Toast.makeText(applicationContext, "Data harus diisi", Toast.LENGTH_SHORT).show()
             }
         }
     }
